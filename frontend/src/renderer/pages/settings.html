@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GLIMPSE - Configuración</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .option {
+            margin-bottom: 20px;
+        }
+
+        .option label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .radio-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-option label {
+            display: block;
+            padding: 15px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 12px 15px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Configuración</h1>
+            <p>Personaliza GLIMPSE a tu gusto</p>
+        </div>
+
+        <div class="content">
+            <!-- Modo de Captura -->
+            <div class="section">
+                <div class="section-title">👁️ Modo de Captura</div>
+                
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="invisible" name="captureMode" value="invisible" checked>
+                        <label for="invisible">
+                            👻 Invisible<br>
+                            <small style="font-size: 11px;">Ultra discreto</small>
+                        </label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="visual" name="captureMode" value="visual">
+                        <label for="visual">
+                            🎨 Visual<br>
+                            <small style="font-size: 11px;">Con overlay</small>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Invisible:</strong> 2 clicks (esquina a esquina), cursor normal, sin efectos visuales, respuesta en cursor<br>
+                    <strong>Visual:</strong> Click y arrastrar, cursor cruz, overlay oscuro, notificación completa
+                </div>
+            </div>
+
+            <!-- Modo de Análisis -->
+            <div class="section">
+                <div class="section-title">🤖 Modo de Análisis</div>
+                
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="exam" name="usageMode" value="exam" checked>
+                        <label for="exam">
+                            📝 Examen<br>
+                            <small style="font-size: 11px;">Solo respuesta</small>
+                        </label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="study" name="usageMode" value="study">
+                        <label for="study">
+                            📚 Estudio<br>
+                            <small style="font-size: 11px;">Con explicación</small>
+                        </label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="quick" name="usageMode" value="quick">
+                        <label for="quick">
+                            ⚡ Rápido<br>
+                            <small style="font-size: 11px;">Ultra breve</small>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Examen:</strong> A, B, C, D o respuesta directa<br>
+                    <strong>Estudio:</strong> Respuesta + explicación breve<br>
+                    <strong>Rápido:</strong> Máximo 1 línea
+                </div>
+            </div>
+
+            <!-- Atajos -->
+            <div class="section">
+                <div class="section-title">⌨️ Atajos de Teclado</div>
+                
+                <div class="info-box">
+                    <strong>Shift+G</strong> → Captura modo examen<br>
+                    <strong>Shift+H</strong> → Captura modo estudio<br>
+                    <strong>Shift+J</strong> → Captura modo rápido<br>
+                    <strong>Ctrl+Shift+G</strong> → Abrir configuración<br>
+                    <strong>ESC</strong> → Cancelar captura
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="window.close()">
+                    Cancelar
+                </button>
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    💾 Guardar
+                </button>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                ✅ Configuración guardada
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Cargar configuración
+        window.addEventListener('DOMContentLoaded', () => {
+            ipcRenderer.send('get-config');
+        });
+
+        ipcRenderer.on('config-data', (event, config) => {
+            document.getElementById(config.captureMode).checked = true;
+            document.getElementById(config.usageMode).checked = true;
+        });
+
+        function saveSettings() {
+            const captureMode = document.querySelector('input[name="captureMode"]:checked').value;
+            const usageMode = document.querySelector('input[name="usageMode"]:checked').value;
+
+            ipcRenderer.send('save-config', {
+                captureMode,
+                usageMode
+            });
+        }
+
+        ipcRenderer.on('config-saved', () => {
+            const message = document.getElementById('successMessage');
+            message.style.display = 'block';
+            
+            setTimeout(() => {
+                window.close();
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

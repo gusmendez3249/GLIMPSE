@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5); /* Overlay oscuro */
+            cursor: crosshair;
+            overflow: hidden;
+        }
+
+        .instruction {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .selection {
+            position: absolute;
+            border: 3px solid #4A90E2;
+            background: rgba(74, 144, 226, 0.1);
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .dimensions {
+            position: absolute;
+            background: rgba(74, 144, 226, 0.95);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            pointer-events: none;
+            display: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="instruction">
+        📸 Arrastra para seleccionar el área • ESC para cancelar
+    </div>
+    <div class="selection" id="selection"></div>
+    <div class="dimensions" id="dimensions">0 × 0</div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        const selection = document.getElementById('selection');
+        const dimensions = document.getElementById('dimensions');
+        const instruction = document.querySelector('.instruction');
+        
+        let isSelecting = false;
+        let startX, startY;
+        let mode = 'exam';
+        
+        ipcRenderer.on('init-capture', (event, data) => {
+            mode = data.mode;
+        });
+
+        // Ocultar instrucción después de 2 segundos
+        setTimeout(() => {
+            instruction.style.opacity = '0';
+            instruction.style.transition = 'opacity 0.3s ease';
+        }, 2000);
+
+        document.addEventListener('mousedown', (e) => {
+            isSelecting = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            selection.style.display = 'block';
+            dimensions.style.display = 'block';
+            selection.style.left = startX + 'px';
+            selection.style.top = startY + 'px';
+            selection.style.width = '0px';
+            selection.style.height = '0px';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isSelecting) return;
+            
+            const currentX = e.clientX;
+            const currentY = e.clientY;
+            const width = currentX - startX;
+            const height = currentY - startY;
+            
+            const absWidth = Math.abs(width);
+            const absHeight = Math.abs(height);
+            
+            selection.style.width = absWidth + 'px';
+            selection.style.height = absHeight + 'px';
+            selection.style.left = (width < 0 ? currentX : startX) + 'px';
+            selection.style.top = (height < 0 ? currentY : startY) + 'px';
+            
+            dimensions.textContent = `${absWidth} × ${absHeight}`;
+            dimensions.style.left = (currentX + 15) + 'px';
+            dimensions.style.top = (currentY + 15) + 'px';
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (!isSelecting) return;
+            isSelecting = false;
+            
+            const bounds = {
+                x: parseInt(selection.style.left),
+                y: parseInt(selection.style.top),
+                width: parseInt(selection.style.width),
+                height: parseInt(selection.style.height)
+            };
+            
+            if (bounds.width > 10 && bounds.height > 10) {
+                ipcRenderer.send('capture-complete', {
+                    bounds,
+                    mode,
+                    cursorPosition: { x: e.screenX, y: e.screenY }
+                });
+            } else {
+                ipcRenderer.send('capture-cancel');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                ipcRenderer.send('capture-cancel');
+            }
+        });
+    </script>
+</body>
+</html>

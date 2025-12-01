@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0) !important; /* Completamente transparente */
+            overflow: hidden;
+            cursor: default; /* Flecha normal del sistema */
+        }
+
+        /* Sin elementos visuales - completamente invisible */
+        /* La ventana captura clics pero es 100% transparente */
+    </style>
+</head>
+<body>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        let firstClick = null;
+        let mode = 'exam';
+
+        // Recibir modo
+        ipcRenderer.on('init-capture', (event, data) => {
+            mode = data.mode;
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!firstClick) {
+                // Primer click - guardar posición
+                firstClick = { x: e.clientX, y: e.clientY };
+            } else {
+                // Segundo click - crear bounds
+                const bounds = {
+                    x: Math.min(firstClick.x, e.clientX),
+                    y: Math.min(firstClick.y, e.clientY),
+                    width: Math.abs(e.clientX - firstClick.x),
+                    height: Math.abs(e.clientY - firstClick.y)
+                };
+
+                if (bounds.width > 10 && bounds.height > 10) {
+                    ipcRenderer.send('capture-complete', {
+                        bounds,
+                        mode,
+                        cursorPosition: { x: e.screenX, y: e.screenY }
+                    });
+                } else {
+                    ipcRenderer.send('capture-cancel');
+                }
+
+                firstClick = null;
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                ipcRenderer.send('capture-cancel');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .tooltip {
+            background: transparent;
+            color: #888888;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            display: inline-block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        const tooltip = document.getElementById('tooltip');
+
+        ipcRenderer.on('show-text', (event, text) => {
+            tooltip.textContent = text;
+        });
+    </script>
+</body>
+</html>
