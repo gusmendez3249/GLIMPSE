@@ -47,3 +47,13 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Jupyter Notebooks
+*.ipynb
+.ipynb_checkpoints/
+**/_ipynb_checkpoints/
+
+# Local diagnostic and test files
+backend/diagnostico_*
+backend/test_*
+

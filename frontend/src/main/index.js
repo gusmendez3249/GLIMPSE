@@ -44,7 +44,7 @@ function createMainWindow() {
             contextIsolation: false
         }
     });
-    
+
     mainWindow.loadFile('src/renderer/pages/index.html');
 }
 
@@ -53,9 +53,9 @@ function createTray() {
     try {
         const iconPath = path.join(__dirname, '../../src/assets/icons/icon.ico');
         tray = new Tray(iconPath);
-        
+
         updateTrayMenu();
-        
+
         tray.setToolTip('GLIMPSE - Asistente de Exámenes');
     } catch (error) {
         console.error('Error creando tray:', error);
@@ -73,7 +73,7 @@ function updateTrayMenu() {
         },
         { type: 'separator' },
         {
-            label: '📸 Capturar (Shift+G)',
+            label: '📸 Capturar (Shift+L)',
             click: () => startCapture('exam')
         },
         { type: 'separator' },
@@ -117,25 +117,15 @@ function updateTrayMenu() {
 
 // Registrar atajos
 function registerShortcuts() {
-    const shortcuts = configManager.get('shortcuts');
-
-    // Shift+G - Modo Examen
-    globalShortcut.register(shortcuts.captureExam, () => {
-        startCapture('exam');
-    });
-
+    // Shift+L - Modo Examen
+    globalShortcut.register('Shift+L', () => startCapture('exam'));
     // Shift+H - Modo Estudio
-    globalShortcut.register(shortcuts.captureStudy, () => {
-        startCapture('study');
-    });
-
+    globalShortcut.register('Shift+H', () => startCapture('study'));
     // Shift+J - Modo Rápido
-    globalShortcut.register(shortcuts.captureQuick, () => {
-        startCapture('quick');
-    });
-
+    globalShortcut.register('Shift+J', () => startCapture('quick'));
     // Ctrl+Shift+G - Configuración
-    globalShortcut.register(shortcuts.openSettings, openSettings);
+    globalShortcut.register('Ctrl+Shift+G', openSettings);
+    console.log('✓ Atajos registrados: Shift+L (examen), Shift+H (estudio), Shift+J (rápido)');
 }
 
 // Iniciar captura
@@ -165,7 +155,7 @@ function startCapture(mode) {
     });
 }
 
-// Ventana flotante en cursor (MODO INVISIBLE)
+// Ventana flotante en esquina inferior derecha (MODO INVISIBLE)
 function showCursorWindow(text, position) {
     if (cursorWindow && !cursorWindow.isDestroyed()) {
         cursorWindow.close();
@@ -176,11 +166,13 @@ function showCursorWindow(text, position) {
     const width = Math.min(Math.max(textLength * 8, 60), 250);
     const height = 30;
 
+    const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
+
     cursorWindow = new BrowserWindow({
         width: width,
         height: height,
-        x: position.x + 15,
-        y: position.y + 15,
+        x: screenWidth - width - 20,
+        y: screenHeight - height - 20,
         frame: false,
         transparent: true,
         alwaysOnTop: true,
@@ -210,11 +202,11 @@ function showCursorWindow(text, position) {
 // Notificación completa (MODO VISUAL)
 function showNotification(response, mode) {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-    
+
     if (notificationWindow && !notificationWindow.isDestroyed()) {
         notificationWindow.close();
     }
-    
+
     notificationWindow = new BrowserWindow({
         width: 400,
         height: 250,
@@ -230,16 +222,16 @@ function showNotification(response, mode) {
             contextIsolation: false
         }
     });
-    
+
     notificationWindow.loadFile('src/renderer/pages/notification.html');
-    
+
     notificationWindow.webContents.once('did-finish-load', () => {
         notificationWindow.webContents.send('show-notification', {
             response,
             mode
         });
     });
-    
+
     // Auto-cerrar después de tiempo configurado
     const duration = configManager.get('notificationDuration') || 8000;
     setTimeout(() => {
@@ -255,7 +247,7 @@ function openSettings() {
         settingsWindow.focus();
         return;
     }
-    
+
     settingsWindow = new BrowserWindow({
         width: 600,
         height: 700,
@@ -266,9 +258,9 @@ function openSettings() {
             contextIsolation: false
         }
     });
-    
+
     settingsWindow.loadFile('src/renderer/pages/settings.html');
-    
+
     settingsWindow.on('closed', () => {
         settingsWindow = null;
     });
@@ -337,14 +329,14 @@ ipcMain.on('get-config', (event) => {
 
 ipcMain.on('save-config', (event, newConfig) => {
     configManager.update(newConfig);
-    
+
     // Re-registrar atajos
     globalShortcut.unregisterAll();
     registerShortcuts();
-    
+
     // Actualizar menú del tray
     updateTrayMenu();
-    
+
     event.reply('config-saved', { success: true });
 });
 

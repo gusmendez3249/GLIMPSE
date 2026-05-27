@@ -3,7 +3,7 @@ const { clipboard } = require('electron');
 
 class ApiClient {
     constructor() {
-        this.baseUrl = 'http://127.0.0.1:5000';
+        this.baseUrl = 'http://127.0.0.1:5005';
     }
 
     setConfig(configManager) {

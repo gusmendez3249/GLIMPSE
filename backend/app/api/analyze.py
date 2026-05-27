@@ -1,7 +1,7 @@
 import gc
 import time
 from flask import Blueprint, request, jsonify
-from app.services.gemini_service import gemini_service
+from app.services.ai_provider_manager import ai_provider_manager
 from app.services.image_service import ImageService
 from app.core.rate_limiter import rate_limiter
 from app.core.logger import logger
@@ -47,8 +47,8 @@ def analyze_image():
         # Procesar imagen
         image = ImageService.process_base64_image(image_data)
         
-        # Analizar con Gemini
-        response_text = gemini_service.analyze_image(
+        # Analizar con AI Provider Manager (con fallback automático)
+        response_text = ai_provider_manager.analyze_image(
             image=image,
             mode=mode,
             custom_prompt=custom_prompt

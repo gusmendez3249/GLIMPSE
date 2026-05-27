@@ -14,7 +14,7 @@ class ConfigManager {
             captureMode: 'invisible',
             showSelectionFeedback: false,
             shortcuts: {
-                captureExam: 'Shift+G',
+                captureExam: 'Shift+Semicolon',
                 captureStudy: 'Shift+H',
                 captureQuick: 'Shift+J',
                 openSettings: 'Ctrl+Shift+G'
@@ -33,7 +33,7 @@ class ConfigManager {
                 study: null,
                 quick: null
             },
-            backendUrl: 'http://127.0.0.1:5000',
+            backendUrl: 'http://127.0.0.1:5005',
             timeout: 30000,
             autoStartBackend: true,
             theme: 'dark',
@@ -49,6 +49,16 @@ class ConfigManager {
             if (fs.existsSync(this.configPath)) {
                 const data = fs.readFileSync(this.configPath, 'utf8');
                 const saved = JSON.parse(data);
+                
+                // MIGRACIÓN: Si el puerto es 5000, cambiarlo a 5005 automáticamente
+                if (saved.backendUrl === 'http://127.0.0.1:5000') {
+                    saved.backendUrl = 'http://127.0.0.1:5005';
+                    // Guardar inmediatamente el cambio para evitar futuros problemas
+                    const migratedConfig = { ...this.getDefaultConfig(), ...saved };
+                    fs.writeFileSync(this.configPath, JSON.stringify(migratedConfig, null, 2));
+                    return migratedConfig;
+                }
+
                 return { ...this.getDefaultConfig(), ...saved };
             }
         } catch (error) {

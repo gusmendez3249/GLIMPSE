@@ -5,6 +5,29 @@
     <title>GLIMPSE</title>
 </head>
 <body>
-    <!-- Ventana principal oculta -->
+    <!-- Ventana principal oculta - captura atajos de teclado -->
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Escuchar teclas globalmente desde el renderer
+        // Esto funciona con caracteres especiales como Ñ que globalShortcut no soporta
+        window.addEventListener('keydown', (e) => {
+            // Shift+Ñ → Modo Examen
+            if (e.shiftKey && (e.key === 'Ñ' || e.key === 'ñ' || e.key === ';')) {
+                e.preventDefault();
+                ipcRenderer.send('shortcut-triggered', 'exam');
+            }
+            // Shift+H → Modo Estudio
+            if (e.shiftKey && e.key === 'H') {
+                e.preventDefault();
+                ipcRenderer.send('shortcut-triggered', 'study');
+            }
+            // Shift+J → Modo Rápido
+            if (e.shiftKey && e.key === 'J') {
+                e.preventDefault();
+                ipcRenderer.send('shortcut-triggered', 'quick');
+            }
+        });
+    </script>
 </body>
 </html>

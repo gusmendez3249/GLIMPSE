@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "node-fetch": "^2.6.7",
-    "sharp": "^0.32.0"
+    "sharp": "^0.32.0",
+    "uiohook-napi": "^1.5.4"
   }
 }
