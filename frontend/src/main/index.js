@@ -73,7 +73,7 @@ function updateTrayMenu() {
         },
         { type: 'separator' },
         {
-            label: '📸 Capturar (Shift+L)',
+            label: '📸 Capturar (Shift+X)',
             click: () => startCapture('exam')
         },
         { type: 'separator' },
@@ -117,15 +117,17 @@ function updateTrayMenu() {
 
 // Registrar atajos
 function registerShortcuts() {
-    // Shift+L - Modo Examen
-    globalShortcut.register('Shift+L', () => startCapture('exam'));
+    // Shift+X - Modo Examen
+    globalShortcut.register('Shift+X', () => startCapture('exam'));
     // Shift+H - Modo Estudio
     globalShortcut.register('Shift+H', () => startCapture('study'));
     // Shift+J - Modo Rápido
     globalShortcut.register('Shift+J', () => startCapture('quick'));
+    // Shift+Z - Modo Pregunta Abierta (Copia exacta al portapapeles)
+    globalShortcut.register('Shift+Z', () => startCapture('open_text'));
     // Ctrl+Shift+G - Configuración
     globalShortcut.register('Ctrl+Shift+G', openSettings);
-    console.log('✓ Atajos registrados: Shift+L (examen), Shift+H (estudio), Shift+J (rápido)');
+    console.log('✓ Atajos registrados: Shift+X (examen), Shift+H (estudio), Shift+J (rápido), Shift+Z (texto abierto)');
 }
 
 // Iniciar captura
@@ -286,13 +288,15 @@ ipcMain.on('capture-complete', async (event, data) => {
         const result = await apiClient.analyzeImage(base64Image, mode);
 
         // Mostrar resultado según el modo
+        const displayResponse = mode === 'open_text' ? 'Lis' : result.response;
+
         if (captureMode === 'invisible') {
             // MODO INVISIBLE: Mostrar tooltip discreto al lado del cursor
-            showCursorWindow(result.response, cursorPosition);
-            console.log('✓ Resultado mostrado en tooltip:', result.response);
+            showCursorWindow(displayResponse, cursorPosition);
+            console.log('✓ Resultado mostrado en tooltip:', displayResponse === 'Lis' ? '(Oculto - copiado al portapapeles)' : displayResponse);
         } else {
             // MODO VISUAL: Notificación completa
-            showNotification(result.response, mode);
+            showNotification(displayResponse, mode);
         }
 
     } catch (error) {
