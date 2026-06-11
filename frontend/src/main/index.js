@@ -125,9 +125,11 @@ function registerShortcuts() {
     globalShortcut.register('Shift+J', () => startCapture('quick'));
     // Shift+Z - Modo Pregunta Abierta (Copia exacta al portapapeles)
     globalShortcut.register('Shift+Z', () => startCapture('open_text'));
+    // Shift+L - Modo OpenRefine (Código o pasos, copia directa)
+    globalShortcut.register('Shift+L', () => startCapture('open_refine'));
     // Ctrl+Shift+G - Configuración
     globalShortcut.register('Ctrl+Shift+G', openSettings);
-    console.log('✓ Atajos registrados: Shift+X (examen), Shift+H (estudio), Shift+J (rápido), Shift+Z (texto abierto)');
+    console.log('✓ Atajos registrados: Shift+X (examen), Shift+H (estudio), Shift+J (rápido), Shift+Z (texto abierto), Shift+L (OpenRefine)');
 }
 
 // Iniciar captura
@@ -288,7 +290,7 @@ ipcMain.on('capture-complete', async (event, data) => {
         const result = await apiClient.analyzeImage(base64Image, mode);
 
         // Mostrar resultado según el modo
-        const displayResponse = mode === 'open_text' ? 'Lis' : result.response;
+        const displayResponse = (mode === 'open_text' || mode === 'open_refine') ? 'Lis' : result.response;
 
         if (captureMode === 'invisible') {
             // MODO INVISIBLE: Mostrar tooltip discreto al lado del cursor
